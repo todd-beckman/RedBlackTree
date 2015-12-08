@@ -2,7 +2,7 @@ package redblacktree;
 
 public class RedBlackTree<T extends Comparable<T>>
 {
-    private final RBLeaf leaf = new RBLeaf();
+    private final RBNode leaf = new RBNode(null);
     
     /**
      * The root of the tree
@@ -41,7 +41,24 @@ public class RedBlackTree<T extends Comparable<T>>
      */
     public boolean find(T object)
     {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        RBNode node = root;
+        while (node != leaf)
+        {
+            int compare = node.object.compareTo(object);
+            if (compare == 0)
+            {
+                return true;
+            }
+            else if (compare < 0)
+            {
+                node = node.left;
+            }
+            else // compare > 0
+            {
+                node = node.right;
+            }
+        }
+        return false;
     }
     
     /**
@@ -79,24 +96,6 @@ public class RedBlackTree<T extends Comparable<T>>
         RBNode (T object)
         {
             this.object = object;
-            black = true;
-        }
-    }
-    
-    /**
-     * A node which is a leaf. It is always black and contains no data.
-     * @author Todd Beckman
-     *
-     */
-    class RBLeaf extends RBNode
-    {
-        
-        /**
-         * Constructs a leaf.
-         */
-        RBLeaf()
-        {
-            super(null);
             black = true;
         }
     }
