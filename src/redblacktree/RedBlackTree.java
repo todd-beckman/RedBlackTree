@@ -58,79 +58,6 @@ public class RedBlackTree<T extends Comparable<T>>
         correctTreeAfterInserting(node);
     }
     
-    /**
-     * Corrects the tree shape after inserting a new node
-     * @param node The node, after it has been inserted into the tree.
-     */
-    private void correctTreeAfterInserting(RBNode node)
-    {
-        RBNode parent = node.parent;
-        //  Case 2: adding node to black parent-- do nothing
-        if (parent.black)
-        {
-            return;
-        }
-        else
-        {
-            //  should not be null. root is black, so if the parent is red
-            //  then it must also have a parent
-            RBNode grandparent = grandparent(node);
-            
-            //  this might be null
-            RBNode uncle = uncle(node);
-            
-            
-            
-            //  Case 3: adding node with red parent and uncle
-            //  -- make the parent and uncle black and grandparent red
-            //  note: if uncle is null, it is a leaf, and leaves are black by definition
-            if (uncle != null && !uncle.black)
-            {
-                parent.black = true;
-                uncle.black = true;
-                grandparent.black = false;
-                return;
-            }
-            
-            else
-            {
-                //  Case 4: parent is red, uncle is black, inside-facing child of
-                //  opposite-side parent -- rotate the parent to be the node's child
-                //  Doing left rotation (case 4a)
-                if (node == parent.right && parent == grandparent.left)
-                {
-                    leftRotation(parent, node);
-                    //  Not done! Must handle Case 5 directly afterward with relinking.
-                    RBNode temp = node;
-                    node = parent;
-                    parent = temp;
-                }
-                //  Doing right rotation (case 4b)
-                else if (node == parent.left && parent == grandparent.right)
-                {
-                    rightRotation(parent, node);
-                    //  Not done! Must handle Case 5 directly afterward with relinking.
-                    RBNode temp = node;
-                    node = parent;
-                    parent = temp;
-                }
-                
-                //  Case 5: red parent, black uncle, outside-facing child of
-                //  same-side parent -- rotate the parent to be the grandparent
-                if (node == parent.left)
-                {
-                    rightRotation(grandparent, parent);
-                }
-                else
-                {
-                    leftRotation(grandparent, parent);
-                }
-                parent.black = true;
-                grandparent.black = false;
-            }
-        }
-        
-    }
     
     /**
      * Hangs a new item on the tree.
@@ -170,6 +97,23 @@ public class RedBlackTree<T extends Comparable<T>>
             }
         }
         return false;
+    }
+    
+    /**
+     * Prints out a depth-first-search string representation of the
+     * tree's current state.
+     */
+    @Override
+    public String toString()
+    {
+        if (root == null)
+        {
+            return "[empty tree]";
+        }
+        else
+        {
+            return root.toString();
+        }
     }
     
     /**
@@ -233,6 +177,87 @@ public class RedBlackTree<T extends Comparable<T>>
         child.right = parent;
     }
     
+
+    /**
+     * Corrects the tree shape after inserting a new node
+     * @param node The node, after it has been inserted into the tree.
+     */
+    private void correctTreeAfterInserting(RBNode node)
+    {
+        //  Case 1: adding to the root-- do nothing except make it black
+        if (node == root)
+        {
+            node.black = true;
+            return;
+        }
+        
+        RBNode parent = node.parent;
+        //  Case 2: adding node to black parent-- do nothing
+        if (parent.black)
+        {
+            return;
+        }
+        else
+        {
+            //  should not be null. root is black, so if the parent is red
+            //  then it must also have a parent
+            RBNode grandparent = grandparent(node);
+            
+            //  this might be null
+            RBNode uncle = uncle(node);
+            
+            //  Case 3: adding node with red parent and uncle
+            //  -- make the parent and uncle black and grandparent red
+            //  note: if uncle is null, it is a leaf, and leaves are black by definition
+            if (uncle != null && !uncle.black)
+            {
+                parent.black = true;
+                uncle.black = true;
+                grandparent.black = false;
+                //  Node: grandparent is now red, so it might break the rules
+                //  fix this with a recursive call!
+                correctTreeAfterInserting(grandparent);
+                return;
+            }
+            else
+            {
+                //  Case 4: parent is red, uncle is black, inside-facing child of
+                //  opposite-side parent -- rotate the parent to be the node's child
+                //  Doing left rotation (case 4a)
+                if (node == parent.right && parent == grandparent.left)
+                {
+                    leftRotation(parent, node);
+                    //  Not done! Must handle Case 5 directly afterward with relinking.
+                    RBNode temp = node;
+                    node = parent;
+                    parent = temp;
+                }
+                //  Doing right rotation (case 4b)
+                else if (node == parent.left && parent == grandparent.right)
+                {
+                    rightRotation(parent, node);
+                    //  Not done! Must handle Case 5 directly afterward with relinking.
+                    RBNode temp = node;
+                    node = parent;
+                    parent = temp;
+                }
+                
+                //  Case 5: red parent, black uncle, outside-facing child of
+                //  same-side parent -- rotate the parent to be the grandparent
+                if (node == parent.left)
+                {
+                    rightRotation(grandparent, parent);
+                }
+                else
+                {
+                    leftRotation(grandparent, parent);
+                }
+                parent.black = true;
+                grandparent.black = false;
+            }
+        }
+    }
+    
     /**
      * A node in the RedBlackTree, which in addition to the standard binary tree
      * structure also has a flag that tells if the current node is black or red.
@@ -275,6 +300,22 @@ public class RedBlackTree<T extends Comparable<T>>
             this.object = object;
         }
         
-        
+        @Override
+        public String toString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.append(black ? "[b:" : "[r:");
+            sb.append(object.toString());
+            sb.append("]\n");
+            if (left != null)
+            {
+                sb.append(left.toString());
+            }
+            if (right != null)
+            {
+                sb.append(right.toString());
+            }
+            return sb.toString();
+        }
     }
 }

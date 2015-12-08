@@ -17,13 +17,15 @@ public class RedBlackTreeTest
     @Test
     public void testConstruct()
     {
-        fail("Not yet implemented");
+        assert("[empty tree]".equals(new RedBlackTree<Integer>().toString()));
     }
     
     @Test
-    public void testInsert()
+    public void testAddCase1()
     {
-        fail("Not yet implemented");
+        RedBlackTree<Integer> tree = new RedBlackTree<Integer>();
+        tree.add(1);
+        assert("[b:1]\n".equals(tree.toString()));
     }
     
     @Test
@@ -33,7 +35,7 @@ public class RedBlackTreeTest
     }
     
     @Test
-    public void testSearch()
+    public void testFind()
     {
         fail("Not yet implemented");
     }
