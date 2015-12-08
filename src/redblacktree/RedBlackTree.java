@@ -60,32 +60,41 @@ public class RedBlackTree<T extends Comparable<T>>
     
     
     /**
-     * Hangs a new item on the tree.
+     * Removes an item from the tree
      * @param object The object to removed from tree
      */
     public void remove(T object)
     {
-        //  Case 1: removing from the root
-        if (root.object.equals(object))
+        //  Find the node corresponding to this object
+        RBNode node = find(object);
+        
+        //  Object was not in the tree
+        if (node == null)
         {
-            
+            return;
+        }
+        
+        //  Case 1: removing from the root
+        if (root == node)
+        {
+            root = null;
         }
             
         throw new UnsupportedOperationException("Not yet implemented.");
     }
     
     /**
-     * Hangs a new item on the tree.
-     * @param object The object to be hung on the tree
+     * Determines if an item is in the tree
+     * @param object The object to be found
      */
-    public boolean find(T object)
+    public RBNode find(T object)
     {
         RBNode node = root;
         while (node != null)
         {
             if (node.object.equals(object))
             {
-                return true;
+                return node;
             }
             else if (node.object.compareTo(object)<  0)
             {
@@ -96,7 +105,7 @@ public class RedBlackTree<T extends Comparable<T>>
                 node = node.right;
             }
         }
-        return false;
+        return node;
     }
     
     /**
